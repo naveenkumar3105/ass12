@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms day-5</title>
+    <!--FireBase SDK-->
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+
+<body>
+    <form id="form">
+        <label for="username">Username:</label>
+        <input type="text" placeholder="Enter your Username" id="username" required>
+        <p id="Usernameerror"></p>
+
+        <label for="pass">Password:</label>
+        <input type="password" placeholder="Enter your Password" id="pass" required>
+        <p id="Passworderror"></p>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        const form = document.getElementById("form");
+
+        const usernameElement = document.getElementById("username");
+        const passwordElement = document.getElementById("pass");
+        const UsernameError = document.getElementById("Usernameerror");
+        const PasswordError = document.getElementById("Passworderror");
+
+        usernameElement.addEventListener("blur", (e) => {
+            const username = e.target.value;
+            if (username === "") {
+                UsernameError.textContent = "*Required";
+                UsernameError.style.color = "red";
+            }
+            else {
+                UsernameError.textContent = "";
+            }
+        });
+
+        passwordElement.addEventListener("blur", (e) => {
+            const password = e.target.value;
+            if (password === "") {
+                PasswordError.textContent = "*Required";
+                PasswordError.style.color = "red";
+            }
+            else {
+                PasswordError.textContent = "";
+            }
+        });
+
+        const validFormData = (username, password) => {
+            console.log("valid method", username, password);
+            const usernameRegex = /^[A-Za-z0-9._-]+$/;
+            if (username.match(usernameRegex) !== null) {
+                console.log("valid username");
+                return true;
+            } else {
+                console.log("Invalid username");
+                UsernameError.textContent = "Invalid Username Format";
+                UsernameError.style.color = "red";
+                return false;
+            }
+        };
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const usernameValue = usernameElement.value;
+            const passwordValue = passwordElement.value;
+
+            if (validFormData(usernameValue, passwordValue)) {
+                saveFormData(usernameValue, passwordValue);
+            }
+        });
+
+        const saveFormData = (username, password) => {
+            const firebaseConfig = {
+                apiKey: "AIzaSyAw17tR2CYsIKcg1Nm6m7-MUe-OlD4iqtc",
+                authDomain: "ass12-bc25b.firebaseapp.com",
+                databaseURL: "https://ass12-bc25b-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "ass12-bc25b",
+                storageBucket: "ass12-bc25b.appspot.com",
+                messagingSenderId: "8199553996",
+                appId: "1:8199553996:web:d77b8858484f04736d9369"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            const db = firebase.database().ref("ReqForm");
+
+            var newRef = db.push();
+
+            newRef.set({
+                u: username,
+                p: password,
+            });
+        }
+    </script>
+</body>
+
+</html>
